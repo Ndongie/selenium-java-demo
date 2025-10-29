@@ -202,8 +202,16 @@ pipeline {
             echo "Allure Report: ${env.BUILD_URL}allure/"
         }
         failure {
-            echo 'Tests failed! Check the reports for details.'
+            script {
+                     // Only show failure message if it's due to tests
+                     def testResult = currentBuild.rawBuild.getAction(hudson.tasks.junit.TestResultAction)
+                     if (testResult && testResult.failCount > 0) {
+                            echo 'Build failed due to test failures! Check the reports for details.'
+                     } else {
+                            echo 'Build failed due to compilation or infrastructure issues!'
+                     }
+            }
             echo "Allure Report: ${env.BUILD_URL}allure/"
-        }
+       }
     }
 }
