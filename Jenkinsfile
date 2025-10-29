@@ -43,7 +43,13 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'mvn clean compile -q'
+                script {
+                    if (isUnix()) {
+                        sh 'mvn clean compile -q'
+                    } else {
+                        bat 'mvn clean compile -q'
+                    }
+                }
             }
         }
 
@@ -51,17 +57,11 @@ pipeline {
             steps {
                 script {
                     // Set the URL based on the environment parameter
-                    def url = ""
-                    if (params.environment == "staging") {
-                        url = "https://practice.qabrains.com/ecommerce/"
-                    } else if (params.environment == "preprod") {
-                        url = "https://practice.qabrains.com/ecommerce/"
-                    } else if (params.environment == "prod") {
-                        url = "https://practice.qabrains.com/ecommerce/"
-                    }
+                    // FIXED: Use params.ENVIRONMENT (uppercase) instead of params.environment
+                    def url = "https://practice.qabrains.com/ecommerce/"
 
                     // Build test command
-                    def testCommand = "mvn test -Durl=${url} -Dbrowser=${params.BROWSER}"
+                    def testCommand = "mvn test -Durl=\"${url}\" -Dbrowser=${params.BROWSER}"
 
                     // Add test suite parameter if not 'all'
                     if (params.TEST_SUITE != 'all') {
@@ -75,40 +75,46 @@ pipeline {
                         testCommand += " -Dheadless=true"
                     }
 
-                     echo "Executing command: ${testCommand}"
-                     if (isUnix()) {
+                    echo "Executing command: ${testCommand}"
+                    if (isUnix()) {
                         sh testCommand
-                     } else {
+                    } else {
                         bat testCommand
-                     }
+                    }
                 }
             }
             post {
                 always {
-                    // Archive JUnit test results
-                    junit 'target/surefire-reports/**/*.xml'
+                    script {
+                        // Archive JUnit test results
+                        junit 'target/surefire-reports/**/*.xml'
 
-                    // Publish HTML reports
-                    publishHTML([
-                        allowMissing: true,
-                        alwaysLinkToLastBuild: true,
-                        keepAll: true,
-                        reportDir: 'target/surefire-reports',
-                        reportFiles: 'extent-report.html',
-                        reportName: 'TestNG Report'
-                    ])
+                        // Publish HTML reports
+                        publishHTML([
+                            allowMissing: true,
+                            alwaysLinkToLastBuild: true,
+                            keepAll: true,
+                            reportDir: 'target/surefire-reports',
+                            reportFiles: 'extent-report.html',
+                            reportName: 'TestNG Report'
+                        ])
 
-                    // Generate Allure report
-                    sh 'mvn allure:report'
+                        // Generate Allure report - platform specific
+                        if (isUnix()) {
+                            sh 'mvn allure:report'
+                        } else {
+                            bat 'mvn allure:report'
+                        }
 
-                    // Archive test results for Allure
-                    allure([
-                        includeProperties: false,
-                        jdk: '',
-                        properties: [],
-                        reportBuildPolicy: 'ALWAYS',
-                        results: [[path: 'target/allure-results']]
-                    ])
+                        // Archive test results for Allure
+                        allure([
+                            includeProperties: false,
+                            jdk: '',
+                            properties: [],
+                            reportBuildPolicy: 'ALWAYS',
+                            results: [[path: 'target/allure-results']]
+                        ])
+                    }
                 }
             }
         }
