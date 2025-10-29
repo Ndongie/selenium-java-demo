@@ -1,6 +1,6 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
-<suite name="Sorting Test Suite">
-    <test name="Sorting Tests" skipfailedinvocationcounts="true">
+<suite name="Authentication Test Suite">
+    <test name="Authentication Tests" skipfailedinvocationcounts="true">
         <groups>
             <run>
                 <include name="authentication"/>

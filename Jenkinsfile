@@ -121,34 +121,34 @@ pipeline {
                 always {
                     script {
                         try {
-                            // Archive JUnit test results
-                            junit 'target/surefire-reports/**/*.xml'
+                                // Archive JUnit test results
+                                junit 'target/surefire-reports/**/*.xml'
 
-                            // Publish HTML reports
-                            publishHTML([
-                                allowMissing: true,
-                                alwaysLinkToLastBuild: true,
-                                keepAll: true,
-                                reportDir: 'target/surefire-reports',
-                                reportFiles: 'extent-report.html',
-                                reportName: 'TestNG Report'
-                            ])
+                                // Publish HTML reports
+                                publishHTML([
+                                    allowMissing: true,
+                                    alwaysLinkToLastBuild: true,
+                                    keepAll: true,
+                                    reportDir: 'target/surefire-reports',
+                                    reportFiles: 'extent-report.html',
+                                    reportName: 'TestNG Report'
+                                ])
 
-                            // Generate Allure report
-                            if (isUnix()) {
-                                sh 'mvn allure:report'
-                            } else {
-                                bat 'mvn allure:report'
-                            }
+                                // Generate Allure report
+                                if (isUnix()) {
+                                    sh 'mvn allure:report'
+                                } else {
+                                    bat 'mvn allure:report'
+                                }
 
-                            // Archive test results for Allure
-                            allure([
-                                includeProperties: false,
-                                jdk: '',
-                                properties: [],
-                                reportBuildPolicy: 'ALWAYS',
-                                results: [[path: 'target/allure-results']]
-                            ])
+                                // Archive test results for Allure
+                                allure([
+                                    includeProperties: false,
+                                    jdk: '',
+                                    properties: [],
+                                    reportBuildPolicy: 'ALWAYS',
+                                    results: [[path: 'target/allure-results']]
+                                ])
                         } catch (Exception e) {
                             echo "Failed to generate reports: ${e.getMessage()}"
                         }
@@ -158,36 +158,69 @@ pipeline {
         }
     }
 
-    post {
-        always {
+    stage('Generate Reports') {
+        steps {
             script {
-                // Send notifications only if email is configured
-                try {
-                    emailext (
-                        subject: "Build Result: ${currentBuild.currentResult} - ${env.JOB_NAME}",
-                        body: """
-                        Build: ${env.BUILD_URL}<br/>
-                        Result: ${currentBuild.currentResult}<br/>
-                        Test Results: ${env.BUILD_URL}testReport/<br/>
-                        Allure Report: ${env.BUILD_URL}allure/<br/>
-                        """,
-                        to: "ndongieawona@gmail.com"
-                    )
-                } catch (Exception e) {
-                    echo "Failed to send email: ${e.getMessage()}"
+               // Generate Allure report data
+               if (isUnix()) {
+                   sh 'mvn allure:report'
+                } else {
+                    bat 'mvn allure:report'
                 }
-
-                // Clean workspace at the very end (optional - you might want to keep it for debugging)
-                // cleanWs()
             }
         }
-        success {
-            echo 'Tests executed successfully!'
-            echo "Allure Report: ${env.BUILD_URL}allure/"
+        post {
+              always {
+                        // Publish Allure report
+                        allure([
+                            includeProperties: false,
+                            jdk: '',
+                            properties: [],
+                            reportBuildPolicy: 'ALWAYS',
+                            results: [[path: 'target/allure-results']]
+                        ])
+
+                        // Archive JUnit results
+                        junit 'target/surefire-reports/**/*.xml'
+
+                        // Archive HTML reports if they exist
+                        archiveArtifacts artifacts: 'target/site/allure-maven-plugin/**/*, target/surefire-reports/*.html', allowEmptyArchive: true
+                    }
+                }
+            }
         }
-        failure {
-            echo 'Tests failed! Check the reports for details.'
-            echo "Allure Report: ${env.BUILD_URL}allure/"
+
+         post {
+                always {
+                    script {
+                        // Send notifications only if email is configured
+                        try {
+                            emailext (
+                                subject: "Build Result: ${currentBuild.currentResult} - ${env.JOB_NAME}",
+                                body: """
+                                Build: ${env.BUILD_URL}<br/>
+                                Result: ${currentBuild.currentResult}<br/>
+                                Test Results: ${env.BUILD_URL}testReport/<br/>
+                                Allure Report: ${env.BUILD_URL}allure/<br/>
+                                """,
+                                to: "ndongieawona@gmail.com"
+                            )
+                        } catch (Exception e) {
+                            echo "Failed to send email: ${e.getMessage()}"
+                        }
+
+                        // Clean workspace at the very end (optional - you might want to keep it for debugging)
+                        // cleanWs()
+                    }
+                }
+                success {
+                    echo 'Tests executed successfully!'
+                    echo "Allure Report: ${env.BUILD_URL}allure/"
+                }
+                failure {
+                    echo 'Tests failed! Check the reports for details.'
+                    echo "Allure Report: ${env.BUILD_URL}allure/"
+                }
         }
     }
 }
