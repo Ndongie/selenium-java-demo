@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools{
-    allure 'allure-2.32.0'
+        allure 'allure'
     }
 
     parameters {
