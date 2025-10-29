@@ -45,13 +45,39 @@ pipeline {
             }
         }
 
+        stage('Validate Environment') {
+            steps {
+                script {
+                    echo "Build Parameters:"
+                    echo "ENVIRONMENT: ${params.ENVIRONMENT}"
+                    echo "BROWSER: ${params.BROWSER}"
+                    echo "TEST_SUITE: ${params.TEST_SUITE}"
+                    echo "RUN_PARALLEL: ${params.RUN_PARALLEL}"
+                    echo "HEADLESS: ${params.HEADLESS}"
+
+                    // Validate tools are available
+                    if (isUnix()) {
+                        sh 'mvn --version'
+                        sh 'allure --version'
+                    } else {
+                        bat 'mvn --version'
+                        bat 'allure --version'
+                    }
+                }
+            }
+        }
+
         stage('Build') {
             steps {
                 script {
-                    if (isUnix()) {
-                        sh 'mvn clean compile -q'
-                    } else {
-                        bat 'mvn clean compile -q'
+                    try {
+                        if (isUnix()) {
+                            sh 'mvn clean compile -q'
+                        } else {
+                            bat 'mvn clean compile -q'
+                        }
+                    } catch (Exception e) {
+                        error "Build failed: ${e.getMessage()}"
                     }
                 }
             }
@@ -60,64 +86,72 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
-                    // Set the URL based on the environment parameter
-                    // FIXED: Use params.ENVIRONMENT (uppercase) instead of params.environment
-                    def url = "https://practice.qabrains.com/ecommerce/"
+                    try {
+                        def url = "https://practice.qabrains.com/ecommerce/"
 
-                    // Build test command
-                    def testCommand = "mvn test -Durl=\"${url}\" -Dbrowser=${params.BROWSER}"
+                        // Build test command with proper escaping
+                        def testCommand = "mvn test -Durl=${url} -Dbrowser=${params.BROWSER}"
 
-                    // Add test suite parameter if not 'all'
-                    if (params.TEST_SUITE != 'all') {
-                        testCommand += " -P${params.TEST_SUITE}"
-                    }
+                        // Add test suite parameter if not 'all'
+                        if (params.TEST_SUITE != 'all') {
+                            testCommand += " -P${params.TEST_SUITE}"
+                        }
 
-                    if (params.RUN_PARALLEL) {
-                        testCommand += " -Dparallel=true"
-                    }
-                    if (params.HEADLESS) {
-                        testCommand += " -Dheadless=true"
-                    }
+                        if (params.RUN_PARALLEL.toBoolean()) {
+                            testCommand += " -Dparallel=true"
+                        }
+                        if (params.HEADLESS.toBoolean()) {
+                            testCommand += " -Dheadless=true"
+                        }
 
-                    echo "Executing command: ${testCommand}"
-                    if (isUnix()) {
-                        sh testCommand
-                    } else {
-                        bat testCommand
+                        echo "Executing command: ${testCommand}"
+
+                        if (isUnix()) {
+                            sh testCommand
+                        } else {
+                            bat testCommand
+                        }
+                    } catch (Exception e) {
+                        echo "Test execution failed: ${e.getMessage()}"
+                        currentBuild.result = 'FAILURE'
                     }
                 }
             }
             post {
                 always {
                     script {
-                        // Archive JUnit test results
-                        junit 'target/surefire-reports/**/*.xml'
+                        try {
+                            // Archive JUnit test results
+                            junit 'target/surefire-reports/**/*.xml'
 
-                        // Publish HTML reports
-                        publishHTML([
-                            allowMissing: true,
-                            alwaysLinkToLastBuild: true,
-                            keepAll: true,
-                            reportDir: 'target/surefire-reports',
-                            reportFiles: 'extent-report.html',
-                            reportName: 'TestNG Report'
-                        ])
+                            // Publish HTML reports
+                            publishHTML([
+                                allowMissing: true,
+                                alwaysLinkToLastBuild: true,
+                                keepAll: true,
+                                reportDir: 'target/surefire-reports',
+                                reportFiles: 'extent-report.html',
+                                reportName: 'TestNG Report'
+                            ])
 
-                        // Generate Allure report - platform specific
-                        if (isUnix()) {
-                            sh 'mvn allure:report'
-                        } else {
-                            bat 'mvn allure:report'
+                            // Generate Allure report
+                            if (isUnix()) {
+                                sh 'mvn allure:report'
+                            } else {
+                                bat 'mvn allure:report'
+                            }
+
+                            // Archive test results for Allure
+                            allure([
+                                includeProperties: false,
+                                jdk: '',
+                                properties: [],
+                                reportBuildPolicy: 'ALWAYS',
+                                results: [[path: 'target/allure-results']]
+                            ])
+                        } catch (Exception e) {
+                            echo "Failed to generate reports: ${e.getMessage()}"
                         }
-
-                        // Archive test results for Allure
-                        allure([
-                            includeProperties: false,
-                            jdk: '',
-                            properties: [],
-                            reportBuildPolicy: 'ALWAYS',
-                            results: [[path: 'target/allure-results']]
-                        ])
                     }
                 }
             }
@@ -126,20 +160,26 @@ pipeline {
 
     post {
         always {
-            // Send notifications
-            emailext (
-                subject: "Build Result: ${currentBuild.currentResult} - ${env.JOB_NAME}",
-                body: """
-                Build: ${env.BUILD_URL}<br/>
-                Result: ${currentBuild.currentResult}<br/>
-                Test Results: ${env.BUILD_URL}testReport/<br/>
-                Allure Report: ${env.BUILD_URL}allure/<br/>
-                """,
-                to: "ndongieawona@gmail.com"
-            )
+            script {
+                // Send notifications only if email is configured
+                try {
+                    emailext (
+                        subject: "Build Result: ${currentBuild.currentResult} - ${env.JOB_NAME}",
+                        body: """
+                        Build: ${env.BUILD_URL}<br/>
+                        Result: ${currentBuild.currentResult}<br/>
+                        Test Results: ${env.BUILD_URL}testReport/<br/>
+                        Allure Report: ${env.BUILD_URL}allure/<br/>
+                        """,
+                        to: "ndongieawona@gmail.com"
+                    )
+                } catch (Exception e) {
+                    echo "Failed to send email: ${e.getMessage()}"
+                }
 
-            // Clean workspace at the very end
-            cleanWs()
+                // Clean workspace at the very end (optional - you might want to keep it for debugging)
+                // cleanWs()
+            }
         }
         success {
             echo 'Tests executed successfully!'
