@@ -3,7 +3,7 @@ pipeline {
 
     parameters {
         choice(
-            name: 'environment',
+            name: 'ENVIRONMENT',
             choices: ['staging', 'preprod', 'prod'],
             description: 'Select the environment to run tests'
         )
@@ -13,7 +13,7 @@ pipeline {
             description: 'Select the browser in which to run tests'
         )
         choice(
-            name: 'TEST',
+            name: 'TEST_SUITE',
             choices: ['all', 'regression', 'sorting', 'smoke', 'product', 'authentication'],
             description: 'Select the test suite to run'
         )
@@ -23,10 +23,10 @@ pipeline {
             description: 'Run tests in parallel'
         )
         booleanParam(
-                    name: 'HEADLESS',
-                    defaultValue: true,
-                    description: 'Run tests in headless browser'
-                )
+            name: 'HEADLESS',
+            defaultValue: true,
+            description: 'Run tests in headless browser'
+        )
     }
 
     stages {
@@ -43,13 +43,7 @@ pipeline {
 
         stage('Build') {
             steps {
-                script {
-                    if (isUnix()) {
-                        sh 'mvn clean compile -q'
-                    } else {
-                        bat 'mvn clean compile -q'
-                    }
-                }
+                sh 'mvn clean compile -q'
             }
         }
 
@@ -64,12 +58,15 @@ pipeline {
                         url = "https://practice.qabrains.com/ecommerce/"
                     } else if (params.environment == "prod") {
                         url = "https://practice.qabrains.com/ecommerce/"
-                    } else {
-                        url = "https://practice.qabrains.com/ecommerce/"
                     }
 
-                    // Run tests
-                    def testCommand = "mvn test -Durl=${url} -Dbrowser=${params.BROWSER} -P${params.TEST}"
+                    // Build test command
+                    def testCommand = "mvn test -Durl=${url} -Dbrowser=${params.BROWSER}"
+
+                    // Add test suite parameter if not 'all'
+                    if (params.TEST_SUITE != 'all') {
+                        testCommand += " -P${params.TEST_SUITE}"
+                    }
 
                     if (params.RUN_PARALLEL) {
                         testCommand += " -Dparallel=true"
@@ -78,16 +75,17 @@ pipeline {
                         testCommand += " -Dheadless=true"
                     }
 
-                    if (isUnix()) {
+                     echo "Executing command: ${testCommand}"
+                     if (isUnix()) {
                         sh testCommand
-                    } else {
+                     } else {
                         bat testCommand
-                    }
+                     }
                 }
             }
             post {
                 always {
-                    // Archive test results
+                    // Archive JUnit test results
                     junit 'target/surefire-reports/**/*.xml'
 
                     // Publish HTML reports
@@ -99,24 +97,21 @@ pipeline {
                         reportFiles: 'extent-report.html',
                         reportName: 'TestNG Report'
                     ])
+
+                    // Generate Allure report
+                    sh 'mvn allure:report'
+
+                    // Archive test results for Allure
+                    allure([
+                        includeProperties: false,
+                        jdk: '',
+                        properties: [],
+                        reportBuildPolicy: 'ALWAYS',
+                        results: [[path: 'target/allure-results']]
+                    ])
                 }
             }
-
-            post {
-                   always {
-                       // Generate Allure report
-                       sh 'mvn allure:report'
-
-                       // Archive test results for Allure
-                       allure([
-                               includeProperties: false,
-                               jdk: '',
-                               properties: [],
-                               reportBuildPolicy: 'ALWAYS',
-                               results: [[path: 'target/allure-results']]
-                               ])
-                   }
-            }
+        }
     }
 
     post {
@@ -128,6 +123,7 @@ pipeline {
                 Build: ${env.BUILD_URL}<br/>
                 Result: ${currentBuild.currentResult}<br/>
                 Test Results: ${env.BUILD_URL}testReport/<br/>
+                Allure Report: ${env.BUILD_URL}allure/<br/>
                 """,
                 to: "ndongieawona@gmail.com"
             )
@@ -137,9 +133,11 @@ pipeline {
         }
         success {
             echo 'Tests executed successfully!'
+            echo "Allure Report: ${env.BUILD_URL}allure/"
         }
         failure {
             echo 'Tests failed! Check the reports for details.'
+            echo "Allure Report: ${env.BUILD_URL}allure/"
         }
     }
 }
