@@ -1,0 +1,17 @@
+[
+  {
+    "email": "test@qabrains.com",
+    "password": "Password123",
+    "firstname": "Test",
+    "lastname": "Qa",
+    "zipcode": "00237"
+  },
+  {
+    "email": "practice@qabrains.com",
+    "password": "Password123"
+  },
+  {
+    "email": "student@qabrains.com",
+    "password": "Password123"
+  }
+]

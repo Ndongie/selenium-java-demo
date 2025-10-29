@@ -1,0 +1,9 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="AllTests">
+    <test name="AllTests" skipfailedinvocationcounts="true">
+        <classes>
+            <class name="loginTests.LoginTests"/>
+            <class name="productTests.ProductTests"/>
+        </classes>
+    </test>
+</suite>
