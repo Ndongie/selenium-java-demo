@@ -22,6 +22,11 @@ pipeline {
             defaultValue: false,
             description: 'Run tests in parallel'
         )
+        booleanParam(
+                    name: 'HEADLESS',
+                    defaultValue: true,
+                    description: 'Run tests in headless browser'
+                )
     }
 
     stages {
@@ -69,6 +74,9 @@ pipeline {
                     if (params.RUN_PARALLEL) {
                         testCommand += " -Dparallel=true"
                     }
+                    if (params.HEADLESS) {
+                        testCommand += " -Dheadless=true"
+                    }
 
                     if (isUnix()) {
                         sh testCommand
@@ -88,12 +96,27 @@ pipeline {
                         alwaysLinkToLastBuild: true,
                         keepAll: true,
                         reportDir: 'target/surefire-reports',
-                        reportFiles: 'emailable-report.html',
+                        reportFiles: 'extent-report.html',
                         reportName: 'TestNG Report'
                     ])
                 }
             }
-        }
+
+            post {
+                   always {
+                       // Generate Allure report
+                       sh 'mvn allure:report'
+
+                       // Archive test results for Allure
+                       allure([
+                               includeProperties: false,
+                               jdk: '',
+                               properties: [],
+                               reportBuildPolicy: 'ALWAYS',
+                               results: [[path: 'target/allure-results']]
+                               ])
+                   }
+            }
     }
 
     post {
