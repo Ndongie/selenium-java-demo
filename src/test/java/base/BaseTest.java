@@ -36,6 +36,7 @@ public class BaseTest {
     protected String browser_mode;
     private String browser;
     private String device_name;
+    private String headless;
     protected int maxRetry;
     private WebDriver driver;
 
@@ -60,6 +61,7 @@ public class BaseTest {
 
         //Set the default url, browser, browser mode or device name values when they are not null
         url = System.getProperty("url");
+        headless = System.getProperty("headless");
         client = System.getProperty("client");
         browser = System.getProperty("browser");
         browser_mode = System.getProperty("browser_mode");
@@ -69,6 +71,10 @@ public class BaseTest {
         if(url == null){
             url = properties.getProperty("url");
             logger.info("No url sent. using the default url:{}", url);
+        }
+        if(headless == null){
+            headless = properties.getProperty("headless");
+            logger.info("No headless sent. using the default value:{}", headless);
         }
         if(language == null){
             language = properties.getProperty("language");
@@ -102,7 +108,7 @@ public class BaseTest {
         orderingData = Utilities.getJsonDataToMap(System.getProperty("user.dir") +
                 "\\src\\test\\data\\orderData.json");
 
-        driver = DriverGetter.getDriver(browser, browser_mode, device_name, language);
+        driver = DriverGetter.getDriver(browser, browser_mode, device_name, language, headless);
         driver.manage().timeouts().implicitlyWait(Duration.ofMillis(20000));
         driver.manage().window().maximize();
 

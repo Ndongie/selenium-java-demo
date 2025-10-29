@@ -35,7 +35,7 @@
 <a href="#"><span class="badge badge-primary"> SPORTIF TEST RESULTS</span></a>
 </li>
 <li class="m-r-10">
-<a href="#"><span class="badge badge-primary">Oct 29, 2025 02:23:34 pm</span></a>
+<a href="#"><span class="badge badge-primary">Oct 29, 2025 03:53:03 pm</span></a>
 </li>
 </ul>
 </div>
@@ -45,11 +45,6 @@
 <li class="nav-item dropdown" onclick="toggleView('test-view')">
 <a id="nav-test" class="dropdown-toggle" href="#">
 <span class="ico"><i class="fa fa-list"></i></span>
-</a>
-</li>
-<li class="nav-item dropdown" onclick="toggleView('exception-view')">
-<a id="nav-exception" class="dropdown-toggle" href="#">
-<span class="ico"><i class="fa fa-bug"></i></span>
 </a>
 </li>
 <li class="nav-item dropdown" onclick="toggleView('dashboard-view')">
@@ -72,7 +67,6 @@
 <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-exclamation-circle"></i></a>
 <ul id="status-toggle" class="dropdown-menu dropdown-md p-v-0">
 <a class="dropdown-item" status="pass" href="#"><span>Pass</span><span class="status success"></span></a>
-<a class="dropdown-item" status="fail" href="#"><span>Fail</span><span class="status danger"></span></a>
 <div class="dropdown-divider"></div>
 <a status="clear" class="dropdown-item" href="#"><span>Clear</span><span class="pull-right"><i class="fa fa-close"></i></span></a>
 </ul>
@@ -85,9 +79,9 @@
           tag=""
           device="">
           <div class="test-detail">
-            <p class="name">orderInAscendingOrder</p>
+            <p class="name">loginWithInvalidEmail</p>
             <p class="text-sm">
-              <span>14:25:08</span> / <span>00:00:23:493</span>
+              <span>15:54:43</span> / <span>00:00:01:433</span>
               <span class="badge pass-bg log float-right">Pass</span>
             </p>
           </div>
@@ -95,10 +89,10 @@
 <div class="detail-head">
 <div class="p-v-10">
 <div class="info">
-<h5 class="test-status text-pass">orderInAscendingOrder</h5>
-<span class='badge badge-success'>10.29.2025 14:25:08</span>
-<span class='badge badge-danger'>10.29.2025 14:25:32</span>
-<span class='badge badge-default'>00:00:23:493</span>
+<h5 class="test-status text-pass">loginWithInvalidEmail</h5>
+<span class='badge badge-success'>10.29.2025 15:54:43</span>
+<span class='badge badge-danger'>10.29.2025 15:54:45</span>
+<span class='badge badge-default'>00:00:01:433</span>
 &middot; <span class='uri-anchor badge badge-default'>#test-id=1</span>
 <span class='badge badge-default pointer float-right ml-1 et'><i class="fa fa-chevron-down"></i></span>
 <span class='badge badge-default pointer float-right ct'><i class="fa fa-chevron-up"></i></span>
@@ -110,7 +104,7 @@
   <tbody>
       <tr class="event-row">
         <td><span class="badge log pass-bg">Pass</span></td>
-        <td>14:25:32</td>
+        <td>15:54:45</td>
         <td>
           Test Passed
         </td>
@@ -120,84 +114,39 @@
 </div>
           </div>
         </li>
-        <li class="test-item"  status="fail" test-id="2"
+        <li class="test-item"  status="pass" test-id="2"
           author=""
           tag=""
           device="">
           <div class="test-detail">
-            <p class="name">orderInDescendingOrder</p>
+            <p class="name">loginWithInvalidPassword</p>
             <p class="text-sm">
-              <span>14:25:34</span> / <span>00:01:16:432</span>
-              <span class="badge fail-bg log float-right">Fail</span>
+              <span>15:54:46</span> / <span>00:00:01:806</span>
+              <span class="badge pass-bg log float-right">Pass</span>
             </p>
           </div>
           <div class="test-contents d-none">
 <div class="detail-head">
 <div class="p-v-10">
 <div class="info">
-<h5 class="test-status text-fail">orderInDescendingOrder</h5>
-<span class='badge badge-success'>10.29.2025 14:25:34</span>
-<span class='badge badge-danger'>10.29.2025 14:26:50</span>
-<span class='badge badge-default'>00:01:16:432</span>
+<h5 class="test-status text-pass">loginWithInvalidPassword</h5>
+<span class='badge badge-success'>10.29.2025 15:54:46</span>
+<span class='badge badge-danger'>10.29.2025 15:54:47</span>
+<span class='badge badge-default'>00:00:01:806</span>
 &middot; <span class='uri-anchor badge badge-default'>#test-id=2</span>
 <span class='badge badge-default pointer float-right ml-1 et'><i class="fa fa-chevron-down"></i></span>
 <span class='badge badge-default pointer float-right ct'><i class="fa fa-chevron-up"></i></span>
 </div>
 </div>
-</div>    <div class="row mb-3"><div class="col-md-3">
-<img data-featherlight='D:\Selenium\Selenium-Java-Demo\src\test\screenshots\orderInDescendingOrder.png' src="D:\Selenium\Selenium-Java-Demo\src\test\screenshots\orderInDescendingOrder.png">
-    <div class="title">orderInDescendingOrder</div>
-    </div></div>
-<div class="detail-body mt-4">
+</div><div class="detail-body mt-4">
 <table class="table table-sm">
   <thead><tr><th class="status-col">Status</th><th class="timestamp-col">Timestamp</th><th class="details-col">Details</th></tr></thead>
   <tbody>
       <tr class="event-row">
-        <td><span class="badge log fail-bg">Fail</span></td>
-        <td>14:26:50</td>
+        <td><span class="badge log pass-bg">Pass</span></td>
+        <td>15:54:47</td>
         <td>
-          <textarea readonly class="code-block">java.lang.AssertionError: Products are not ordered in descending order
-Expected:[Sample Trouser Name, Sample T-Shirt Name, Sample T-Shirt Name, Sample Sunglass Name, Sample Sunglass Name, Sample Shoe Name, Sample Shirt Name, Sample Jacket Name, Sample Jacket Name]
-Actual:[Sample T-Shirt Name, Sample Sunglass Name, Sample Jacket Name, Sample Sunglass Name, Sample T-Shirt Name, Sample Trouser Name, Sample Jacket Name, Sample Shoe Name, Sample Shirt Name]: Lists differ at element [0]: Sample T-Shirt Name != Sample Trouser Name expected [Sample T-Shirt Name] but found [Sample Trouser Name]
-	at org.testng.Assert.fail(Assert.java:111)
-	at org.testng.Assert.failNotEquals(Assert.java:1578)
-	at org.testng.Assert.assertEqualsImpl(Assert.java:150)
-	at org.testng.Assert.assertEquals(Assert.java:1644)
-	at productTests.ProductTests.orderInDescendingOrder(ProductTests.java:58)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
-	at org.testng.internal.invokers.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:141)
-	at org.testng.internal.invokers.TestInvoker.invokeMethod(TestInvoker.java:686)
-	at org.testng.internal.invokers.TestInvoker.invokeTestMethod(TestInvoker.java:230)
-	at org.testng.internal.invokers.MethodRunner.runInSequence(MethodRunner.java:63)
-	at org.testng.internal.invokers.TestInvoker$MethodInvocationAgent.invoke(TestInvoker.java:992)
-	at org.testng.internal.invokers.TestInvoker.invokeTestMethods(TestInvoker.java:203)
-	at org.testng.internal.invokers.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:154)
-	at org.testng.internal.invokers.TestMethodWorker.run(TestMethodWorker.java:134)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
-	at org.testng.TestRunner.privateRun(TestRunner.java:739)
-	at org.testng.TestRunner.run(TestRunner.java:614)
-	at org.testng.SuiteRunner.runTest(SuiteRunner.java:421)
-	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:413)
-	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:373)
-	at org.testng.SuiteRunner.run(SuiteRunner.java:312)
-	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
-	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:95)
-	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1274)
-	at org.testng.TestNG.runSuitesLocally(TestNG.java:1208)
-	at org.testng.TestNG.runSuites(TestNG.java:1112)
-	at org.testng.TestNG.run(TestNG.java:1079)
-	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:308)
-	at org.apache.maven.surefire.testng.TestNGXmlTestSuite.execute(TestNGXmlTestSuite.java:71)
-	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:113)
-	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
-	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
-	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
-	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
-</textarea>
-          
+          Test Passed
         </td>
       </tr>
   </tbody>
@@ -210,9 +159,9 @@ Actual:[Sample T-Shirt Name, Sample Sunglass Name, Sample Jacket Name, Sample Su
           tag=""
           device="">
           <div class="test-detail">
-            <p class="name">orderFromLowToHighPrice</p>
+            <p class="name">loginWithValidCredentials</p>
             <p class="text-sm">
-              <span>14:26:52</span> / <span>00:01:16:107</span>
+              <span>15:54:48</span> / <span>00:00:03:425</span>
               <span class="badge pass-bg log float-right">Pass</span>
             </p>
           </div>
@@ -220,10 +169,10 @@ Actual:[Sample T-Shirt Name, Sample Sunglass Name, Sample Jacket Name, Sample Su
 <div class="detail-head">
 <div class="p-v-10">
 <div class="info">
-<h5 class="test-status text-pass">orderFromLowToHighPrice</h5>
-<span class='badge badge-success'>10.29.2025 14:26:52</span>
-<span class='badge badge-danger'>10.29.2025 14:28:08</span>
-<span class='badge badge-default'>00:01:16:107</span>
+<h5 class="test-status text-pass">loginWithValidCredentials</h5>
+<span class='badge badge-success'>10.29.2025 15:54:48</span>
+<span class='badge badge-danger'>10.29.2025 15:54:51</span>
+<span class='badge badge-default'>00:00:03:425</span>
 &middot; <span class='uri-anchor badge badge-default'>#test-id=3</span>
 <span class='badge badge-default pointer float-right ml-1 et'><i class="fa fa-chevron-down"></i></span>
 <span class='badge badge-default pointer float-right ct'><i class="fa fa-chevron-up"></i></span>
@@ -235,92 +184,9 @@ Actual:[Sample T-Shirt Name, Sample Sunglass Name, Sample Jacket Name, Sample Su
   <tbody>
       <tr class="event-row">
         <td><span class="badge log pass-bg">Pass</span></td>
-        <td>14:28:08</td>
+        <td>15:54:51</td>
         <td>
           Test Passed
-        </td>
-      </tr>
-  </tbody>
-</table>
-</div>
-          </div>
-        </li>
-        <li class="test-item"  status="fail" test-id="4"
-          author=""
-          tag=""
-          device="">
-          <div class="test-detail">
-            <p class="name">orderFromHighToLowPrice</p>
-            <p class="text-sm">
-              <span>14:28:09</span> / <span>00:01:16:266</span>
-              <span class="badge fail-bg log float-right">Fail</span>
-            </p>
-          </div>
-          <div class="test-contents d-none">
-<div class="detail-head">
-<div class="p-v-10">
-<div class="info">
-<h5 class="test-status text-fail">orderFromHighToLowPrice</h5>
-<span class='badge badge-success'>10.29.2025 14:28:09</span>
-<span class='badge badge-danger'>10.29.2025 14:29:25</span>
-<span class='badge badge-default'>00:01:16:266</span>
-&middot; <span class='uri-anchor badge badge-default'>#test-id=4</span>
-<span class='badge badge-default pointer float-right ml-1 et'><i class="fa fa-chevron-down"></i></span>
-<span class='badge badge-default pointer float-right ct'><i class="fa fa-chevron-up"></i></span>
-</div>
-</div>
-</div>    <div class="row mb-3"><div class="col-md-3">
-<img data-featherlight='D:\Selenium\Selenium-Java-Demo\src\test\screenshots\orderFromHighToLowPrice.png' src="D:\Selenium\Selenium-Java-Demo\src\test\screenshots\orderFromHighToLowPrice.png">
-    <div class="title">orderFromHighToLowPrice</div>
-    </div></div>
-<div class="detail-body mt-4">
-<table class="table table-sm">
-  <thead><tr><th class="status-col">Status</th><th class="timestamp-col">Timestamp</th><th class="details-col">Details</th></tr></thead>
-  <tbody>
-      <tr class="event-row">
-        <td><span class="badge log fail-bg">Fail</span></td>
-        <td>14:29:25</td>
-        <td>
-          <textarea readonly class="code-block">java.lang.AssertionError: Products are not ordered from high to low price: Lists differ at element [0]: 49.99 != 256.45 expected [49.99] but found [256.45]
-	at org.testng.Assert.fail(Assert.java:111)
-	at org.testng.Assert.failNotEquals(Assert.java:1578)
-	at org.testng.Assert.assertEqualsImpl(Assert.java:150)
-	at org.testng.Assert.assertEquals(Assert.java:1644)
-	at productTests.ProductTests.orderFromHighToLowPrice(ProductTests.java:96)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
-	at org.testng.internal.invokers.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:141)
-	at org.testng.internal.invokers.TestInvoker.invokeMethod(TestInvoker.java:686)
-	at org.testng.internal.invokers.TestInvoker.invokeTestMethod(TestInvoker.java:230)
-	at org.testng.internal.invokers.MethodRunner.runInSequence(MethodRunner.java:63)
-	at org.testng.internal.invokers.TestInvoker$MethodInvocationAgent.invoke(TestInvoker.java:992)
-	at org.testng.internal.invokers.TestInvoker.invokeTestMethods(TestInvoker.java:203)
-	at org.testng.internal.invokers.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:154)
-	at org.testng.internal.invokers.TestMethodWorker.run(TestMethodWorker.java:134)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
-	at org.testng.TestRunner.privateRun(TestRunner.java:739)
-	at org.testng.TestRunner.run(TestRunner.java:614)
-	at org.testng.SuiteRunner.runTest(SuiteRunner.java:421)
-	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:413)
-	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:373)
-	at org.testng.SuiteRunner.run(SuiteRunner.java:312)
-	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
-	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:95)
-	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1274)
-	at org.testng.TestNG.runSuitesLocally(TestNG.java:1208)
-	at org.testng.TestNG.runSuites(TestNG.java:1112)
-	at org.testng.TestNG.run(TestNG.java:1079)
-	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:308)
-	at org.apache.maven.surefire.testng.TestNGXmlTestSuite.execute(TestNGXmlTestSuite.java:71)
-	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:113)
-	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
-	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
-	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
-	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
-</textarea>
-          
         </td>
       </tr>
   </tbody>
@@ -337,86 +203,30 @@ Actual:[Sample T-Shirt Name, Sample Sunglass Name, Sample Jacket Name, Sample Su
 </div>
 <div class="test-content-detail"><div class="detail-body"></div></div>
 </div></div>
-<div class="test-wrapper row view exception-view attributes-view">
-<div class="test-list">
-<div class="test-list-tools">
-<ul class="tools pull-left"><li><a href=""><span class="font-size-14">Exception</span></a></li></ul>
-<ul class="tools text-right"><li><a href="#"><span class="badge badge-primary">1</span></a></li></ul>
-</div>
-<div class="test-list-wrapper scrollable">
-<ul class="test-list-item">
-<li class="test-item">
-<div class="test-detail">
-<span class="meta">
-<span class='badge log badge-danger'>2</span>
-</span>
-<p class="name">java.lang.AssertionError</p>
-<p class="duration text-sm">2 tests</p>
-</div>
-<div class="test-contents d-none">
-<div class="info">
-<h4>java.lang.AssertionError</h4>
-<span status="fail" class='badge log badge-danger'>2 failed</span>
-</div>
-<table class='table table-sm mt-4'>
-<thead>
-<tr>
-<th class="status-col">Status</th>
-<th class="timestamp-col">Timestamp</th>
-<th>TestName</th>
-</tr>
-</thead>
-<tbody>
-<tr class="tag-test-status" status="fail">
-<td><span class="badge log fail-bg">Fail</span></td>
-<td>14:25:34 pm</td>
-<td>
-<a href="#" class="linked" test-id='2' id='2'>orderInDescendingOrder</a>
-</td>
-</tr>
-<tr class="tag-test-status" status="fail">
-<td><span class="badge log fail-bg">Fail</span></td>
-<td>14:28:09 pm</td>
-<td>
-<a href="#" class="linked" test-id='4' id='4'>orderFromHighToLowPrice</a>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</li>
-</ul>
-</div>
-</div>
-<div class="test-content scrollable">
-<div class="test-content-detail">
-<div class="detail-body"></div>
-</div>
-</div>
-</div><div class="container-fluid p-4 view dashboard-view">
+<div class="container-fluid p-4 view dashboard-view">
 <div class="row">
 <div class="col-md-3">
 <div class="card"><div class="card-body">
 <p class="m-b-0">Started</p>
-<h3>Oct 29, 2025 02:23:34 pm</h3>
+<h3>Oct 29, 2025 03:53:03 pm</h3>
 </div></div>
 </div>
 <div class="col-md-3">
 <div class="card"><div class="card-body">
 <p class="m-b-0">Ended</p>
-<h3>Oct 29, 2025 02:29:25 pm</h3>
+<h3>Oct 29, 2025 03:54:52 pm</h3>
 </div></div>
 </div>
 <div class="col-md-3">
 <div class="card"><div class="card-body">
 <p class="m-b-0 text-pass">Tests Passed</p>
-<h3>2</h3>
+<h3>3</h3>
 </div></div>
 </div>
 <div class="col-md-3">
 <div class="card"><div class="card-body">
 <p class="m-b-0 text-fail">Tests Failed</p>
-<h3>2</h3>
+<h3>0</h3>
 </div></div>
 </div>
 </div>
@@ -432,12 +242,12 @@ Actual:[Sample T-Shirt Name, Sample Sunglass Name, Sample Jacket Name, Sample Su
 </div>
 </div>
 <div class="card-footer">
-<div><small data-tooltip='50%'>
-<b>2</b> tests passed
+<div><small data-tooltip='100%'>
+<b>3</b> tests passed
 </small>
 </div>
 <div>
-<small data-tooltip='50%'><b>2</b> tests failed,
+<small data-tooltip='0%'><b>0</b> tests failed,
 <b>0</b> skipped, <b data-tooltip='0%'>0</b> others
 </small>
 </div>
@@ -455,9 +265,9 @@ Actual:[Sample T-Shirt Name, Sample Sunglass Name, Sample Jacket Name, Sample Su
 </div>
 </div>
 <div class="card-footer">
-<div><small data-tooltip='50%'><b>2</b> events passed</small></div>
+<div><small data-tooltip='100%'><b>3</b> events passed</small></div>
 <div>
-<small data-tooltip='50%'><b>2</b> events failed,
+<small data-tooltip='0%'><b>0</b> events failed,
 <b data-tooltip='%'>0</b> others
 </small>
 </div>
@@ -474,7 +284,7 @@ Actual:[Sample T-Shirt Name, Sample Sunglass Name, Sample Jacket Name, Sample Su
 </div></div>
 <script>
 var timeline = {
-"orderInAscendingOrder":23.493,"orderInDescendingOrder":76.432,"orderFromLowToHighPrice":76.107,"orderFromHighToLowPrice":76.266
+"loginWithInvalidEmail":1.433,"loginWithInvalidPassword":1.806,"loginWithValidCredentials":3.425
 };
 </script>
 <div class="row">
@@ -497,8 +307,8 @@ var timeline = {
 <script>
 var statusGroup = {
 parentCount: 5,
-passParent: 2,
-failParent: 2,
+passParent: 3,
+failParent: 0,
 warningParent: 0,
 skipParent: 0,
 childCount: 5,
@@ -514,8 +324,8 @@ warningGrandChild: 0,
 skipGrandChild: 0,
 infoGrandChild: 0,
 eventsCount: 5,
-passEvents: 2,
-failEvents: 2,
+passEvents: 3,
+failEvents: 0,
 warningEvents: 0,
 skipEvents: 0,
 infoEvents: 0
