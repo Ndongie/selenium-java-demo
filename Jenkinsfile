@@ -34,6 +34,29 @@ pipeline {
     }
 
     stages {
+         stage('Clean Workspace') {
+                    steps {
+                        script {
+                            // Clean previous Allure results
+                            if (isUnix()) {
+                                sh '''
+                                    echo "=== Cleaning previous Allure results ==="
+                                    rm -rf target/allure-results || true
+                                    rm -rf target/allure-report || true
+                                    mkdir -p target/allure-results
+                                '''
+                            } else {
+                                bat '''
+                                    echo "=== Cleaning previous Allure results ==="
+                                    rmdir /s /q target\\allure-results 2>nul || echo No previous results
+                                    rmdir /s /q target\\allure-report 2>nul || echo No previous report
+                                    mkdir target\\allure-results
+                                '''
+                            }
+                        }
+                    }
+         }
+
         stage('Checkout') {
             steps {
                 retry(3) {
