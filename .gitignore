@@ -1,5 +1,7 @@
 src/test/screenshots
 
+allure-results/
+
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
