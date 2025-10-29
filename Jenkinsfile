@@ -38,7 +38,13 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'mvn clean compile -q'
+                script {
+                    if (isUnix()) {
+                        sh 'mvn clean compile -q'
+                    } else {
+                        bat 'mvn clean compile -q'
+                    }
+                }
             }
         }
 
@@ -58,10 +64,16 @@ pipeline {
                     }
 
                     // Run tests
+                    def testCommand = "mvn test -Durl=${url} -Dbrowser=${params.BROWSER} -P${params.TEST}"
+
                     if (params.RUN_PARALLEL) {
-                        sh "mvn test -Durl=${url} -Dbrowser=${params.BROWSER} -P${params.TEST} -Dparallel=true"
+                        testCommand += " -Dparallel=true"
+                    }
+
+                    if (isUnix()) {
+                        sh testCommand
                     } else {
-                        sh "mvn test -Durl=${url} -Dbrowser=${params.BROWSER} -P${params.TEST}"
+                        bat testCommand
                     }
                 }
             }
