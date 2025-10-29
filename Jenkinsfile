@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    tools{
+    allure 'allure-2.32.0'
+    }
+
     parameters {
         choice(
             name: 'ENVIRONMENT',
