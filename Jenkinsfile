@@ -8,19 +8,19 @@ pipeline {
 
     parameters {
         choice(
-                name: 'environment',
-                choices: ['staging', 'preprod', 'prod'],
-                description: 'Select the environment to run tests'
+            name: 'environment',
+            choices: ['staging', 'preprod', 'prod'],
+            description: 'Select the environment to run tests'
         )
         choice(
-                name: 'BROWSER',
-                choices: ['chrome', 'firefox', 'edge', 'safari'],
-                description: 'Select the browser in which to run tests'
+            name: 'BROWSER',
+            choices: ['chrome', 'firefox', 'edge', 'safari'],
+            description: 'Select the browser in which to run tests'
         )
         choice(
-                name: 'TEST',
-                choices: ['all', 'regression', 'sorting', 'smoke', 'product', 'authentication'],
-                description: 'Select the test suite to run'
+            name: 'TEST',
+            choices: ['all', 'regression', 'sorting', 'smoke', 'product', 'authentication'],
+            description: 'Select the test suite to run'
         )
         booleanParam(
             name: 'RUN_PARALLEL',
@@ -32,40 +32,41 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'master',
-                    url: 'https://github.com/Ndongie/selenium-java-demo.git',
-//                     credentialsId: ''
+                retry(3) {
+                    timeout(time: 2, unit: 'MINUTES') {
+                        git branch: 'master',
+                            url: 'https://github.com/Ndongie/selenium-java-demo.git'
+                    }
+                }
             }
         }
 
         stage('Build') {
             steps {
-                sh 'mvn clean compile'
+                sh 'mvn clean compile -q'
             }
         }
 
         stage('Run Tests') {
-          environment {
-                URL = ""
-          }
             steps {
                 script {
-                    //Set the url based on the environment
-                    if(params.environment == "staging"){
-                        ${env.URL} = "https://practice.qabrains.com/ecommerce/"
-                    }
-                    else if(params.environment == "preprod"){
-                        ${env.URL} = "https://practice.qabrains.com/ecommerce/"
-                    }
-                    else if(params.environment == "prod"){
-                        ${env.URL} = "https://practice.qabrains.com/ecommerce/"
+                    // Set the URL based on the environment parameter
+                    def url = ""
+                    if (params.environment == "staging") {
+                        url = "https://practice.qabrains.com/ecommerce/"
+                    } else if (params.environment == "preprod") {
+                        url = "https://practice.qabrains.com/ecommerce/"
+                    } else if (params.environment == "prod") {
+                        url = "https://practice.qabrains.com/ecommerce/"
+                    } else {
+                        url = "https://practice.qabrains.com/ecommerce/"
                     }
 
                     // Run tests
                     if (params.RUN_PARALLEL) {
-                        sh "mvn test -Durl=${env.URL} -Dbrowser=${params.BROWSER} -P${params.TEST} -Dparallel=true"
+                        sh "mvn test -Durl=${url} -Dbrowser=${params.BROWSER} -P${params.TEST} -Dparallel=true"
                     } else {
-                        sh "mvn test -Durl=${env.URL} -Dbrowser=${params.BROWSER} -P${params.TEST}"
+                        sh "mvn test -Durl=${url} -Dbrowser=${params.BROWSER} -P${params.TEST}"
                     }
                 }
             }
@@ -76,11 +77,11 @@ pipeline {
 
                     // Publish HTML reports
                     publishHTML([
-                        allowMissing: false,
+                        allowMissing: true,
                         alwaysLinkToLastBuild: true,
                         keepAll: true,
                         reportDir: 'target/surefire-reports',
-                        reportFiles: 'test-report.html',
+                        reportFiles: 'emailable-report.html',
                         reportName: 'TestNG Report'
                     ])
                 }
@@ -90,9 +91,6 @@ pipeline {
 
     post {
         always {
-            // Clean workspace
-            cleanWs()
-
             // Send notifications
             emailext (
                 subject: "Build Result: ${currentBuild.currentResult} - ${env.JOB_NAME}",
@@ -103,6 +101,9 @@ pipeline {
                 """,
                 to: "ndongieawona@gmail.com"
             )
+
+            // Clean workspace at the very end
+            cleanWs()
         }
         success {
             echo 'Tests executed successfully!'
