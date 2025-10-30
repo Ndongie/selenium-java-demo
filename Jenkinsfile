@@ -34,30 +34,30 @@ pipeline {
     }
 
     stages {
-//         stage('Clean Workspace') {
-//             steps {
-//                 script {
-//                     // Clean previous Allure results
-//                     if (isUnix()) {
-//                          sh '''
-//                                 echo "=== Cleaning previous Allure results ==="
-//                                 rm -rf target/allure-results || true
-//                                 rm -rf target/allure-report || true
-//                                 rm -rf allure-report || true
-//                                 mkdir -p target/allure-results
-//                             '''
-//                     } else {
-//                         bat '''
-//                                 echo "=== Cleaning previous Allure results ==="
-//                                 rmdir /s /q target\\allure-results 2>nul || echo No previous results
-//                                 rmdir /s /q target\\allure-report 2>nul || echo No previous report
-//                                 rmdir /s /q allure-report 2>nul || echo No previous allure-report
-//                                 mkdir target\\allure-results
-//                         '''
-//                     }
-//                 }
-//             }
-//         }
+        stage('Clean Workspace') {
+            steps {
+                script {
+                    // Clean previous Allure results
+                    if (isUnix()) {
+                         sh '''
+                                echo "=== Cleaning previous Allure results ==="
+                                rm -rf target/allure-results || true
+                                rm -rf target/allure-report || true
+                                rm -rf allure-report || true
+                                mkdir -p target/allure-results
+                            '''
+                    } else {
+                        bat '''
+                                echo "=== Cleaning previous Allure results ==="
+                                rmdir /s /q target\\allure-results 2>nul || echo No previous results
+                                rmdir /s /q target\\allure-report 2>nul || echo No previous report
+                                rmdir /s /q allure-report 2>nul || echo No previous allure-report
+                                mkdir target\\allure-results
+                        '''
+                    }
+                }
+            }
+        }
 
         stage('Checkout') {
             steps {
@@ -128,8 +128,12 @@ pipeline {
                         testCommand += " -Dheadless=true"
                     }
 
-                    // Allow Maven to continue even if tests fail
+                    // Add Allure configuration
+                    testCommand += " -Dallure.results.directory=target/allure-results"
                     testCommand += " -Dmaven.test.failure.ignore=true"
+
+                    // Force Allure execution
+                    testCommand += " -Dallure.enabled=true"
 
                     echo "Executing command: ${testCommand}"
 
