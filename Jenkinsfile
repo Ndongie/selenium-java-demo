@@ -39,18 +39,20 @@ pipeline {
                 script {
                     // Clean previous Allure results
                     if (isUnix()) {
-                        sh '''
-                            echo "=== Cleaning previous Allure results ==="
-                            rm -rf target/allure-results || true
-                            rm -rf target/allure-report || true
-                            mkdir -p target/allure-results
-                        '''
+                         sh '''
+                                echo "=== Cleaning previous Allure results ==="
+                                rm -rf target/allure-results || true
+                                rm -rf target/allure-report || true
+                                rm -rf allure-report || true
+                                mkdir -p target/allure-results
+                            '''
                     } else {
                         bat '''
-                            echo "=== Cleaning previous Allure results ==="
-                            rmdir /s /q target\\allure-results 2>nul || echo No previous results
-                            rmdir /s /q target\\allure-report 2>nul || echo No previous report
-                            mkdir target\\allure-results
+                                echo "=== Cleaning previous Allure results ==="
+                                rmdir /s /q target\\allure-results 2>nul || echo No previous results
+                                rmdir /s /q target\\allure-report 2>nul || echo No previous report
+                                rmdir /s /q allure-report 2>nul || echo No previous allure-report
+                                mkdir target\\allure-results
                         '''
                     }
                 }
@@ -143,44 +145,68 @@ pipeline {
             }
         }
 
-        stage('Generate Reports') {
-            steps {
-                script {
-                    // Generate reports - don't affect build result if this fails
+         stage('Generate Reports') {
+                    steps {
+                        script {
+                            // check if allure results exist
+                            def allureResultsExist = fileExists('target/allure-results')
 
-                        if (isUnix()) {
-                            sh 'mvn allure:report'
-                        } else {
-                            bat 'mvn allure:report'
+                            if (!allureResultsExist) {
+                                echo "WARNING: No Allure results found at target/allure-results"
+                                echo "Skipping report generation"
+                                return
+                            }
+
+                            echo "Allure results found. Generating reports..."
+
+                            // Generate Allure report using the command line tool directly
+                            catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
+                                if (isUnix()) {
+                                    sh 'mvn allure:report -Dallure.results.directory=target/allure-results'
+                                } else {
+                                    bat 'mvn allure:report -Dallure.results.directory=target/allure-results'
+                                }
+                            }
                         }
-                }
-            }
-            post {
-                always {
-                    script {
-                        // Publish reports
-
-                            allure([
-                                includeProperties: false,
-                                jdk: '',
-                                properties: [],
-                                reportBuildPolicy: 'ALWAYS',
-                                results: [[path: 'target/allure-results']]
-                            ])
-
+                    }
+                    post {
+                        always {
+                            script {
+                                // Try to publish Allure report, even if generation failed
+                                catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
+                                    if (fileExists('target/allure-results')) {
+                                        allure([
+                                            includeProperties: false,
+                                            jdk: '',
+                                            properties: [],
+                                            reportBuildPolicy: 'ALWAYS',
+                                            results: [[path: 'target/allure-results']]
+                                        ])
+                                        echo "Allure report published successfully"
+                                    } else {
+                                        echo "No Allure results to publish"
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
-            }
         }
+
     }
 
-    post {
-        success {
-            echo 'Build completed successfully! All tests passed.'
+        post {
+            success {
+                echo 'Build completed successfully! All tests passed.'
+            }
+            unstable {
+                echo 'Build completed with unstable status (likely report generation issues), but tests passed.'
+            }
+            failure {
+                echo 'Build failed due to test failures! Check the reports for details.'
+            }
+            always {
+                echo "Allure Report: ${env.BUILD_URL}allure/"
+            }
         }
-        failure {
-            echo 'Build failed due to test failures! Check the reports for details.'
-            echo "Allure Report: ${env.BUILD_URL}allure/"
-        }
-    }
 }
