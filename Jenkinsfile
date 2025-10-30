@@ -217,7 +217,7 @@ pipeline {
                         }
 
                         catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
-                            archiveArtifacts artifacts: 'target/site/allure-maven-plugin/**/*, target/surefire-reports/*.html', allowEmptyArchive: true
+                            archiveArtifacts artifacts: 'target/site/allure-maven-plugin/**/*, target/surefire-reports/*.html', allowEmptyArchive: false
                         }
                     }
                 }
@@ -226,75 +226,11 @@ pipeline {
     }
 
     post {
-        always {
-            script {
-                // Send email - completely ignore any failures (don't affect stage or build)
-                try {
-                    def testResult = currentBuild.rawBuild.getAction(hudson.tasks.junit.TestResultAction)
-                    def totalTests = testResult?.totalCount ?: 0
-                    def failedTests = testResult?.failCount ?: 0
-                    def passedTests = totalTests - failedTests
-
-                    emailext (
-                        subject: "Build Result: ${currentBuild.currentResult} - ${env.JOB_NAME}",
-                        body: """
-                        <html>
-                        <body>
-                        <h2>Build Notification</h2>
-                        <p><strong>Project:</strong> ${env.JOB_NAME}</p>
-                        <p><strong>Build Number:</strong> #${env.BUILD_NUMBER}</p>
-                        <p><strong>Result:</strong> ${currentBuild.currentResult}</p>
-                        <p><strong>Duration:</strong> ${currentBuild.durationString.replace(' and counting', '')}</p>
-
-                        <h3>Test Summary:</h3>
-                        <ul>
-                            <li>Total Tests: ${totalTests}</li>
-                            <li>Passed Tests: ${passedTests}</li>
-                            <li>Failed Tests: ${failedTests}</li>
-                        </ul>
-
-                        <h3>Links:</h3>
-                        <ul>
-                            <li><a href="${env.BUILD_URL}">Build Details</a></li>
-                            <li><a href="${env.BUILD_URL}testReport/">Test Results</a></li>
-                            <li><a href="${env.BUILD_URL}allure/">Allure Report</a></li>
-                            <li><a href="${env.BUILD_URL}console">Console Output</a></li>
-                        </ul>
-
-                        <h3>Parameters:</h3>
-                        <ul>
-                            <li>Environment: ${params.ENVIRONMENT}</li>
-                            <li>Browser: ${params.BROWSER}</li>
-                            <li>Test Suite: ${params.TEST_SUITE}</li>
-                            <li>Parallel: ${params.RUN_PARALLEL}</li>
-                            <li>Headless: ${params.HEADLESS}</li>
-                        </ul>
-                        </body>
-                        </html>
-                        """,
-                        to: "ndongieawona@gmail.com",
-                        mimeType: "text/html"
-                    )
-                } catch (Exception e) {
-                    // Completely ignore email failures - don't log as error, don't affect build
-                    echo "Email notification failed but build continues: ${e.getMessage()}"
-                }
-            }
-        }
         success {
             echo 'Build completed successfully! All tests passed.'
-            echo "Allure Report: ${env.BUILD_URL}allure/"
         }
         failure {
-            script {
-                // Only show failure message if it's due to tests
-                def testResult = currentBuild.rawBuild.getAction(hudson.tasks.junit.TestResultAction)
-                if (testResult && testResult.failCount > 0) {
-                    echo 'Build failed due to test failures! Check the reports for details.'
-                } else {
-                    echo 'Build failed due to compilation or infrastructure issues!'
-                }
-            }
+            echo 'Build failed due to test failures! Check the reports for details.'
             echo "Allure Report: ${env.BUILD_URL}allure/"
         }
     }
