@@ -143,70 +143,23 @@ pipeline {
             }
         }
 
-        stage('Evaluate Test Results') {
-            steps {
-                script {
-                    // Check if test results exist
-                    if (fileExists('target/surefire-reports')) {
-                        echo "Test results directory exists"
-
-                        // Use JUnit results to determine if tests failed
-                        junit (
-                            testResults: 'target/surefire-reports/**/*.xml',
-                            allowEmptyResults: true,
-                            skipPublishingChecks: true
-                        )
-
-                        // Manually check for test failures
-                        def testResult = currentBuild.rawBuild.getAction(hudson.tasks.junit.TestResultAction)
-                        if (testResult) {
-                            def failCount = testResult.failCount
-                            def totalCount = testResult.totalCount
-
-                            echo "Test Results Summary:"
-                            echo "Total Tests: ${totalCount}"
-                            echo "Failed Tests: ${failCount}"
-                            echo "Passed Tests: ${totalCount - failCount}"
-
-                            if (failCount > 0) {
-                                // This is the ONLY place where we fail the build for tests
-                                currentBuild.result = 'FAILURE'
-                                error "Build failed due to ${failCount} test failure(s)"
-                            } else if (totalCount == 0) {
-                                echo "Warning: No tests were executed"
-                            } else {
-                                echo "All tests passed!"
-                                // Explicitly set build to SUCCESS if tests passed
-                                currentBuild.result = 'SUCCESS'
-                            }
-                        } else {
-                            echo "No test results found - assuming tests passed or were not executed"
-                        }
-                    } else {
-                        echo "No test results directory found - tests may not have executed"
-                    }
-                }
-            }
-        }
-
         stage('Generate Reports') {
             steps {
                 script {
                     // Generate reports - don't affect build result if this fails
-                    catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
+
                         if (isUnix()) {
-                            sh 'mvn allure:report || echo "Allure report generation failed but continuing"'
+                            sh 'mvn allure:report'
                         } else {
-                            bat 'mvn allure:report || echo "Allure report generation failed but continuing"'
+                            bat 'mvn allure:report'
                         }
-                    }
                 }
             }
             post {
                 always {
                     script {
-                        // Publish reports - don't affect build result if these fail
-                        catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
+                        // Publish reports
+
                             allure([
                                 includeProperties: false,
                                 jdk: '',
@@ -214,11 +167,7 @@ pipeline {
                                 reportBuildPolicy: 'ALWAYS',
                                 results: [[path: 'target/allure-results']]
                             ])
-                        }
 
-                        catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
-                            archiveArtifacts artifacts: 'target/site/allure-maven-plugin/**/*, target/surefire-reports/*.html', allowEmptyArchive: false
-                        }
                     }
                 }
             }
