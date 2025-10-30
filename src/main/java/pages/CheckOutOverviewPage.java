@@ -7,6 +7,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import utils.SeleniumActions;
 
 import java.time.Duration;
 
@@ -43,7 +44,7 @@ public class CheckOutOverviewPage {
     public OrderConfirmationPage clickFinishButton(){
         logger.info("Clicking the finish button");
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofMillis(10000));
-        driver.findElement(finishButon).click();
+        SeleniumActions.scrollToElementAndClick(driver, driver.findElement(finishButon));
         wait.until(ExpectedConditions.presenceOfElementLocated(orderConfirmationHeading));
         logger.info("Finish button found and successfully clicked");
         return new OrderConfirmationPage(driver);
