@@ -121,6 +121,15 @@ public class ProductTests extends BaseTest {
     }
 
     private void login(){
-        homePage = loginPage.login(userData.get(0).get("email"), userData.get(0).get("password"));
+        //Login if user was not previously logged in
+        if(homePage == null){
+            homePage = loginPage.login(userData.get(0).get("email"), userData.get(0).get("password"));
+        }
+        else{
+            if(!homePage.isSuccessfulLogin()){
+                homePage = loginPage.login(userData.get(0).get("email"), userData.get(0).get("password"));
+            }
+        }
+
     }
 }

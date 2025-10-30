@@ -30,6 +30,7 @@ public class HomePage {
     private final By addToCartNotification = By.cssSelector("section ol");
     private final By gotoCartButton = By.cssSelector("#ecommerce-header span[role='button']");
     private final By cartProductNameLocator = By.cssSelector("#cart .mt-3 h3");
+    private final By userEmailOnHomePage = By.cssSelector(".user-name");
     private final WebDriverWait wait;
 
     public HomePage(WebDriver driver){
@@ -62,12 +63,6 @@ public class HomePage {
                 driver.findElements(orderByOptions).get(3).click();
                 break;
         }
-        //Wait for the elements to be ordered
-//        try {
-//            Thread.sleep(5000);
-//        } catch (InterruptedException e) {
-//            throw new RuntimeException(e);
-//        }
         logger.info("Items successfully ordered in {}", orderingOptions.name());
     }
 
@@ -129,10 +124,26 @@ public class HomePage {
 
     public CartPage clickCartButton(){
         logger.info("Click the cart button");
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(addToCartNotification));
         SeleniumActions.scrollToElementAndClick(driver, driver.findElement(gotoCartButton));
         wait.until(ExpectedConditions.presenceOfElementLocated(cartProductNameLocator));
         logger.info("cart button found and successfully clicked");
         return new CartPage(driver);
+    }
+
+    public boolean isSuccessfulLogin(){
+        logger.info("Checking if user is already logged in");
+        boolean result = false;
+         try{
+             driver.findElement(userEmailOnHomePage);
+             result = true;
+             logger.info("User is already logged in");
+         }
+         catch (Exception e){
+             logger.info("User is not logged in");
+         }
+
+         return result;
     }
 
 }
